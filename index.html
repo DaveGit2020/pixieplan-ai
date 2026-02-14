@@ -170,20 +170,21 @@ textarea.form-input{resize:vertical;min-height:56px}
 
 <div class="container">
 
-<!-- EMAIL GATE -->
+<!-- VIP ACCESS GATE -->
 <div class="gate" id="gate">
   <div class="gate-sparkle">&#10024;</div>
   <h1>PixiePlanner.ai</h1>
   <div class="tagline">Your Family's Disney Trip, Planned by AI</div>
   <p class="sub">Personalized day-by-day guides built around your kids' ages, heights, and personalities. Real tips from real families.</p>
   <div class="gate-box">
-    <h2>Get Early Access</h2>
-    <p>Enter your email to see how it works</p>
+    <h2>Early Access Preview</h2>
+    <p>Enter your access code to continue</p>
     <div class="gate-row">
-      <input class="gate-input" id="gateEmail" type="email" placeholder="you@email.com" autocomplete="email">
+      <input class="gate-input" id="gateCode" type="text" placeholder="Access code" autocomplete="off" autocapitalize="off">
       <button class="gate-btn" onclick="checkGate()">Enter &#10024;</button>
     </div>
-    <div class="gate-note">Free to browse. No spam. Unsubscribe anytime.</div>
+    <div class="gate-note">Invite only — ask Dave for your code</div>
+    <div class="gate-error" id="gateError" style="color:#ef4444;font-size:13px;margin-top:10px;display:none">Code not recognized. Check with Dave.</div>
   </div>
 </div>
 
@@ -372,6 +373,19 @@ textarea.form-input{resize:vertical;min-height:56px}
     <p style="margin-top:6px;font-size:11px">AI-powered trip planning for every theme park</p>
   </div>
 
+  <!-- Legal Footer -->
+  <div class="legal-footer" style="text-align:center;padding:24px 0 8px;border-top:1px solid rgba(212,168,83,.08);margin-top:32px">
+    <p style="color:#5a5680;font-size:11px;line-height:1.8;max-width:540px;margin:0 auto">
+      PixiePlanner.ai is an independent service and is <strong style="color:var(--text-dim)">not affiliated with, endorsed by, or in any way officially connected to</strong> The Walt Disney Company, Walt Disney World, Disneyland, or any of their subsidiaries or affiliates. All theme park names, ride names, and related trademarks are the property of their respective owners and are used here for informational purposes only.
+    </p>
+    <div style="margin-top:14px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+      <a href="/privacy" style="color:var(--gold);font-size:11px;text-decoration:none;font-weight:600;opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">Privacy Policy</a>
+      <a href="/terms" style="color:var(--gold);font-size:11px;text-decoration:none;font-weight:600;opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">Terms of Service</a>
+      <a href="/disclaimer" style="color:var(--gold);font-size:11px;text-decoration:none;font-weight:600;opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">Disclaimer</a>
+    </div>
+    <p style="color:#3a366a;font-size:10px;margin-top:12px">&copy; 2026 PixiePlanner.ai. All rights reserved. A product of ParkPlanner.ai.</p>
+  </div>
+
   <div class="footer">pixieplanner.ai — Built with pixie dust & AI</div>
 </div>
 
@@ -401,24 +415,30 @@ var STRIPE_LINK = '#intake';
   }
 })();
 
-// ========== EMAIL GATE ==========
+// ========== VIP ACCESS GATE ==========
+var VIP_CODES = ['vip','pixie','pixieplan','pixieplanner','dave','sarah','davefontaine','beta'];
+
 function checkGate(){
-  var email = document.getElementById('gateEmail').value.trim();
-  if(!email || !email.includes('@') || !email.includes('.')){
-    showToast('Please enter a valid email!');
+  var code = document.getElementById('gateCode').value.trim().toLowerCase().replace(/\s+/g,'');
+  if(!code) return;
+  if(VIP_CODES.indexOf(code)===-1){
+    document.getElementById('gateError').style.display='block';
+    document.getElementById('gateCode').style.borderColor='#ef4444';
+    setTimeout(function(){
+      document.getElementById('gateError').style.display='none';
+      document.getElementById('gateCode').style.borderColor='rgba(212,168,83,.25)';
+    },3000);
     return;
   }
-  // Capture email
+  // Track access
   fetch('https://api.web3forms.com/submit', {
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       access_key:WEB3FORMS_KEY,
-      subject:'PixiePlanner.ai — New Email Signup',
+      subject:'PixiePlanner.ai — VIP Access: '+code,
       from_name:'PixiePlanner.ai',
-      email:email,
-      source:window.location.href,
-      referrer:document.referrer||'direct',
-      timestamp:new Date().toISOString()
+      message:JSON.stringify({code:code,timestamp:new Date().toISOString(),ua:navigator.userAgent}),
+      page:window.location.href
     })
   }).catch(function(){});
   // Unlock
@@ -431,8 +451,8 @@ function checkGate(){
 // Auto-access via URL param
 (function(){
   var p = new URLSearchParams(window.location.search);
-  var a = p.get('access');
-  if(a && ['vip','pixie','pixieplan','pixieplanner','dave','sarah','davefontaine','beta'].indexOf(a.toLowerCase())!==-1){
+  var a = p.get('access') || p.get('code') || p.get('a');
+  if(a && VIP_CODES.indexOf(a.toLowerCase())!==-1){
     document.getElementById('gate').style.display='none';
     document.getElementById('main').style.display='block';
     setTimeout(initFadeIn,100);
@@ -440,7 +460,7 @@ function checkGate(){
 })();
 
 // Enter key
-document.getElementById('gateEmail').addEventListener('keydown',function(e){if(e.key==='Enter')checkGate()});
+document.getElementById('gateCode').addEventListener('keydown',function(e){if(e.key==='Enter')checkGate()});
 
 // ========== COMMUNITY FORMS ==========
 function toggleComm(type){
