@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PixiePlan.ai — Your AI Disney Trip Planner</title>
+<title>PixiePlanner.ai — Your AI Disney Trip Planner</title>
 <meta name="description" content="Get a personalized AI-powered Disney guide built around YOUR family. Real tips from real families. Smart planning from 180 days out to day-of.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -124,7 +124,7 @@ textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
 <!-- ACCESS GATE -->
 <div class="gate" id="gate">
   <div class="gate-logo">&#10024;</div>
-  <h1>PixiePlan.ai</h1>
+  <h1>PixiePlanner.ai</h1>
   <p>Enter your access code to continue</p>
   <div class="gate-row">
     <input class="gate-input" id="gateCode" type="text" placeholder="Access code" autocomplete="off" autocapitalize="off">
@@ -140,7 +140,7 @@ textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
     <span class="hero-sparkle">&#10024;</span>
     <h1>Your Family's Disney Trip,<br><span>Planned by AI</span></h1>
     <div class="sub">Real tips from real families. Personalized for yours.</div>
-    <p>PixiePlan uses AI to build a custom Disney World guide around YOUR family — your kids' ages, heights, personalities, budget, and energy levels. No more generic advice. No more meltdowns on Day 3.</p>
+    <p>PixiePlanner uses AI to build a custom Disney World guide around YOUR family — your kids' ages, heights, personalities, budget, and energy levels. No more generic advice. No more meltdowns on Day 3.</p>
     <div class="hero-badge">&#9889; Early Access — Help Us Build It</div>
   </div>
 
@@ -314,7 +314,7 @@ textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
     <p style="margin-top:6px;font-size:11px">AI-powered trip planning for every theme park</p>
   </div>
 
-  <div class="footer">pixieplan.ai &mdash; Built with pixie dust & AI</div>
+  <div class="footer">pixieplanner.ai &mdash; Built with pixie dust & AI</div>
 </div>
 
 </div>
@@ -324,7 +324,7 @@ textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
 
 <script>
 // ========== CONFIG ==========
-var ACCESS_CODES = ['vip','pixie','pixieplan','dave','sarah','davefontaine','beta'];
+var ACCESS_CODES = ['vip','pixie','pixieplan','pixieplanner','dave','sarah','davefontaine','beta'];
 var WEB3FORMS_KEY = 'e71b608c-ba69-4dc3-82d0-765910e81fc3';
 
 // ========== ACCESS GATE ==========
@@ -388,8 +388,8 @@ function submitForm(e, type){
   // Send via Web3Forms
   var data = {
     access_key: WEB3FORMS_KEY,
-    subject: 'PixiePlan.ai Signup: ' + type.toUpperCase() + ' — ' + name,
-    from_name: 'PixiePlan.ai',
+    subject: 'PixiePlanner.ai Signup: ' + type.toUpperCase() + ' — ' + name,
+    from_name: 'PixiePlanner.ai',
     name: name,
     email: email,
     signup_type: type,
@@ -425,8 +425,8 @@ function trackEvent(action, label){
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       access_key: WEB3FORMS_KEY,
-      subject: 'PixiePlan.ai Event: ' + action,
-      from_name: 'PixiePlan.ai Analytics',
+      subject: 'PixiePlanner.ai Event: ' + action,
+      from_name: 'PixiePlanner.ai Analytics',
       action: action,
       label: label || '',
       page: window.location.href,
