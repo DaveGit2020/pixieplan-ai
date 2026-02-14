@@ -6,145 +6,215 @@
 <title>PixiePlanner.ai — Your AI Disney Trip Planner</title>
 <meta name="description" content="Get a personalized AI-powered Disney guide built around YOUR family. Real tips from real families. Smart planning from 180 days out to day-of.">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;background:#0a0814;color:#fff;min-height:100vh;overflow-x:hidden}
-.bg{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 30% 20%,rgba(147,51,234,.12) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(219,39,119,.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(79,70,229,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
-.container{max-width:680px;margin:0 auto;padding:32px 20px 60px;position:relative;z-index:1}
+:root{
+  --midnight:#0f1538;--deep:#151c4a;--navy:#1a2456;
+  --gold:#d4a853;--gold-light:#e8c97a;--gold-glow:rgba(212,168,83,.25);
+  --star:#f0e6d0;--blush:#e8b4c8;--rose:#d48ba6;
+  --text:#e8e4f0;--text-dim:#9a94b0;--white:#fff;
+}
+body{font-family:'Nunito',sans-serif;background:var(--midnight);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-/* Access Gate */
-.gate{text-align:center;padding:60px 20px}
-.gate-logo{font-size:48px;margin-bottom:16px}
-.gate h1{font-size:28px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.gate p{color:#9ca3af;font-size:14px;margin-bottom:28px}
-.gate-row{display:flex;gap:10px;max-width:320px;margin:0 auto}
-.gate-input{flex:1;padding:12px 16px;border-radius:10px;border:1px solid #2a2240;background:#13101f;color:#fff;font-size:15px;outline:none}
-.gate-input:focus{border-color:#9333ea}
-.gate-input::placeholder{color:#555}
-.gate-btn{padding:12px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,#9333ea,#db2777);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.gate-btn:hover{opacity:.9}
-.gate-err{color:#f472b6;font-size:13px;margin-top:10px;display:none}
+/* Starfield background */
+.sky{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0a0e2a 0%,#111840 40%,#1a2456 70%,#1e2a5e 100%);z-index:0}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.star{position:absolute;width:2px;height:2px;background:var(--star);border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+/* Sparkle accent */
+.sparkle-float{position:fixed;pointer-events:none;z-index:0}
+.sparkle-float span{position:absolute;width:4px;height:4px;background:var(--gold);border-radius:50%;animation:float-up 6s ease-in-out infinite;opacity:0}
+@keyframes float-up{0%{transform:translateY(0) scale(0);opacity:0}20%{opacity:.8;transform:translateY(-40px) scale(1)}80%{opacity:.4;transform:translateY(-120px) scale(.6)}100%{transform:translateY(-180px) scale(0);opacity:0}}
 
-/* Main Content */
+.container{max-width:720px;margin:0 auto;padding:24px 20px 60px;position:relative;z-index:1}
+
+/* Email Gate */
+.gate{text-align:center;padding:80px 20px 60px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gate-sparkle{font-size:64px;margin-bottom:16px;filter:drop-shadow(0 0 20px var(--gold-glow))}
+.gate h1{font-size:32px;font-weight:900;margin-bottom:4px;color:var(--gold-light);letter-spacing:-.5px}
+.gate .tagline{color:var(--blush);font-size:16px;font-weight:600;margin-bottom:6px}
+.gate .sub{color:var(--text-dim);font-size:14px;margin-bottom:32px;max-width:400px;line-height:1.5}
+.gate-box{background:rgba(26,36,86,.6);border:1px solid rgba(212,168,83,.2);backdrop-filter:blur(10px);border-radius:20px;padding:32px 28px;max-width:400px;width:100%}
+.gate-box h2{font-size:18px;font-weight:800;color:var(--white);margin-bottom:4px}
+.gate-box p{color:var(--text-dim);font-size:13px;margin-bottom:18px}
+.gate-row{display:flex;gap:8px}
+.gate-input{flex:1;padding:13px 16px;border-radius:12px;border:1px solid rgba(212,168,83,.25);background:rgba(15,21,56,.8);color:var(--white);font-size:15px;font-family:inherit;outline:none;transition:border-color .2s}
+.gate-input:focus{border-color:var(--gold)}
+.gate-input::placeholder{color:#5a5680}
+.gate-btn{padding:13px 24px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c49640);color:var(--midnight);font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap}
+.gate-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--gold-glow)}
+.gate-note{color:var(--text-dim);font-size:11px;margin-top:12px}
+
+/* Main */
 .main{display:none}
-.hero{text-align:center;padding:20px 0 40px}
-.hero-sparkle{font-size:56px;margin-bottom:12px;display:block}
-.hero h1{font-size:36px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;line-height:1.1}
-.hero h1 span{background:linear-gradient(135deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero .sub{color:#a78bfa;font-size:17px;font-weight:500;margin-bottom:8px}
-.hero .desc{color:#9ca3af;font-size:15px;line-height:1.6;max-width:520px;margin:0 auto 24px}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(147,51,234,.15);border:1px solid rgba(147,51,234,.3);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;color:#c084fc;text-transform:uppercase;letter-spacing:1px}
+
+/* Hero */
+.hero{text-align:center;padding:24px 0 44px}
+.hero-spark{font-size:52px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 16px var(--gold-glow))}
+.hero h1{font-size:34px;font-weight:900;letter-spacing:-.5px;margin-bottom:8px;line-height:1.15;color:var(--white)}
+.hero h1 em{font-style:normal;color:var(--gold-light)}
+.hero .sub{color:var(--blush);font-size:17px;font-weight:600;margin-bottom:10px}
+.hero .desc{color:var(--text-dim);font-size:15px;line-height:1.6;max-width:540px;margin:0 auto 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.25);padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
+
+/* CTA Button */
+.cta-section{text-align:center;margin:0 0 44px}
+.cta-btn{display:inline-block;padding:18px 44px;border-radius:16px;border:none;background:linear-gradient(135deg,var(--gold),#c49640);color:var(--midnight);font-size:18px;font-weight:900;font-family:inherit;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 4px 24px var(--gold-glow)}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,168,83,.4)}
+.cta-sub{color:var(--text-dim);font-size:13px;margin-top:10px}
+
+/* Sample Preview */
+.sample-section{margin:0 0 44px;text-align:center}
+.sample-card{background:rgba(26,36,86,.5);border:1px solid rgba(212,168,83,.15);border-radius:20px;padding:28px;transition:border-color .2s}
+.sample-card:hover{border-color:rgba(212,168,83,.4)}
+.sample-card h3{font-size:18px;font-weight:800;color:var(--white);margin-bottom:6px}
+.sample-card p{color:var(--text-dim);font-size:14px;margin-bottom:16px;line-height:1.5}
+.sample-link{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-weight:700;font-size:15px;text-decoration:none;transition:gap .2s}
+.sample-link:hover{gap:12px}
+
+/* Section Labels */
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:2.5px;color:var(--gold);font-weight:800;margin-bottom:16px}
 
 /* How It Works */
-.section-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#6b7280;font-weight:700;margin-bottom:14px}
-.how-it-works{margin:40px 0}
+.how-it-works{margin:0 0 44px}
 .steps{display:grid;gap:12px}
-.step{display:flex;gap:14px;align-items:flex-start;background:#13101f;border:1px solid #1e1a2e;border-radius:14px;padding:18px}
-.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#9333ea,#db2777);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
-.step-text h3{font-size:15px;font-weight:700;margin-bottom:3px}
-.step-text p{color:#9ca3af;font-size:13px;line-height:1.5}
+.step{display:flex;gap:16px;align-items:flex-start;background:rgba(26,36,86,.4);border:1px solid rgba(212,168,83,.1);border-radius:16px;padding:20px}
+.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#c49640);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:var(--midnight);flex-shrink:0}
+.step-text h3{font-size:15px;font-weight:800;color:var(--white);margin-bottom:3px}
+.step-text p{color:var(--text-dim);font-size:13px;line-height:1.5}
 
 /* Features */
-.features{margin:40px 0}
+.features{margin:0 0 44px}
 .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:480px){.feat-grid{grid-template-columns:1fr}}
-.feat{background:#13101f;border:1px solid #1e1a2e;border-radius:12px;padding:16px}
-.feat-icon{font-size:24px;margin-bottom:6px}
-.feat h4{font-size:14px;font-weight:700;margin-bottom:3px}
-.feat p{color:#9ca3af;font-size:12px;line-height:1.4}
+.feat{background:rgba(26,36,86,.4);border:1px solid rgba(212,168,83,.08);border-radius:14px;padding:18px}
+.feat-icon{font-size:26px;margin-bottom:6px}
+.feat h4{font-size:14px;font-weight:800;color:var(--white);margin-bottom:3px}
+.feat p{color:var(--text-dim);font-size:12px;line-height:1.5}
 
-/* Signup Cards */
-.signup-section{margin:44px 0 20px}
-.signup-cards{display:grid;gap:12px}
-.signup-card{background:#13101f;border:1px solid #1e1a2e;border-radius:16px;padding:24px;transition:border-color .2s;cursor:pointer}
-.signup-card:hover{border-color:#9333ea}
-.signup-card .top-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.signup-card .card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.signup-card .card-icon.families{background:rgba(147,51,234,.15)}
-.signup-card .card-icon.influencers{background:rgba(219,39,119,.15)}
-.signup-card .card-icon.experts{background:rgba(59,130,246,.15)}
-.signup-card .card-icon.vendors{background:rgba(234,179,8,.15)}
-.signup-card h3{font-size:16px;font-weight:700}
-.signup-card .card-tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:5px;margin-left:auto}
-.tag-purple{background:rgba(147,51,234,.2);color:#c084fc}
-.tag-pink{background:rgba(219,39,119,.2);color:#f472b6}
-.tag-blue{background:rgba(59,130,246,.2);color:#60a5fa}
-.tag-yellow{background:rgba(234,179,8,.2);color:#fbbf24}
-.signup-card p{color:#9ca3af;font-size:13px;line-height:1.5;margin-bottom:14px}
-.signup-card ul{list-style:none;margin-bottom:16px}
-.signup-card ul li{color:#d1d5db;font-size:13px;padding:3px 0;padding-left:18px;position:relative}
-.signup-card ul li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%}
-.signup-card.families li::before{background:#9333ea}
-.signup-card.influencers li::before{background:#db2777}
-.signup-card.experts li::before{background:#3b82f6}
-.signup-card.vendors li::before{background:#eab308}
+/* Parks Covered */
+.parks-section{margin:0 0 44px}
+.parks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:520px){.parks-grid{grid-template-columns:repeat(2,1fr)}}
+.park-chip{background:rgba(26,36,86,.5);border:1px solid rgba(212,168,83,.12);border-radius:12px;padding:14px 10px;text-align:center;transition:border-color .2s}
+.park-chip:hover{border-color:rgba(212,168,83,.3)}
+.park-chip .park-emoji{font-size:28px;display:block;margin-bottom:4px}
+.park-chip .park-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.2}
 
-/* Form */
-.signup-form{display:none;margin-top:14px;padding-top:14px;border-top:1px solid #1e1a2e}
-.signup-form.open{display:block}
-.form-row{margin-bottom:10px}
-.form-row label{display:block;font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.form-input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #2a2240;background:#0a0814;color:#fff;font-size:14px;outline:none}
-.form-input:focus{border-color:#9333ea}
-.form-input::placeholder{color:#444}
-textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
-.form-submit{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px}
+/* Intake Form Area */
+.intake-section{margin:0 0 44px;text-align:center}
+.intake-placeholder{background:rgba(26,36,86,.4);border:2px dashed rgba(212,168,83,.2);border-radius:20px;padding:40px 24px}
+.intake-placeholder h3{font-size:18px;font-weight:800;color:var(--white);margin-bottom:8px}
+.intake-placeholder p{color:var(--text-dim);font-size:14px;line-height:1.5;margin-bottom:16px}
+.intake-placeholder .coming{display:inline-block;background:rgba(212,168,83,.1);border:1px solid rgba(212,168,83,.2);color:var(--gold);padding:8px 20px;border-radius:10px;font-size:13px;font-weight:700}
+
+/* Community Cards */
+.community-section{margin:0 0 40px}
+.community-cards{display:grid;gap:10px}
+.comm-card{background:rgba(26,36,86,.4);border:1px solid rgba(212,168,83,.1);border-radius:16px;padding:20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.comm-card:hover{border-color:rgba(212,168,83,.3);transform:translateY(-1px)}
+.comm-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.comm-icon.inf{background:rgba(232,180,200,.12)}
+.comm-icon.exp{background:rgba(100,140,230,.12)}
+.comm-icon.ven{background:rgba(212,168,83,.12)}
+.comm-info h3{font-size:15px;font-weight:800;color:var(--white)}
+.comm-info p{color:var(--text-dim);font-size:12px;line-height:1.4}
+.comm-tag{margin-left:auto;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:6px;white-space:nowrap}
+.tag-blush{background:rgba(232,180,200,.12);color:var(--blush)}
+.tag-blue{background:rgba(100,140,230,.12);color:#8ab4f8}
+.tag-gold{background:rgba(212,168,83,.12);color:var(--gold)}
+
+/* Community form */
+.comm-form{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,168,83,.1)}
+.comm-form.open{display:block}
+.form-row{margin-bottom:8px}
+.form-row label{display:block;font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid rgba(212,168,83,.15);background:rgba(15,21,56,.6);color:var(--white);font-size:14px;font-family:inherit;outline:none}
+.form-input:focus{border-color:var(--gold)}
+.form-input::placeholder{color:#4a4670}
+textarea.form-input{resize:vertical;min-height:56px}
+.form-submit{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;transition:all .2s;color:var(--midnight)}
 .form-submit:hover{opacity:.9}
-.form-submit.purple{background:linear-gradient(135deg,#9333ea,#7c3aed);color:#fff}
-.form-submit.pink{background:linear-gradient(135deg,#db2777,#be185d);color:#fff}
-.form-submit.blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
-.form-submit.yellow{background:linear-gradient(135deg,#eab308,#ca8a04);color:#fff}
+.form-submit.blush{background:linear-gradient(135deg,var(--blush),var(--rose))}
+.form-submit.blue{background:linear-gradient(135deg,#6488e6,#4a6cd4)}
+.form-submit.gold{background:linear-gradient(135deg,var(--gold),#c49640)}
 
-/* Proof */
-.proof{margin:40px 0;text-align:center}
-.proof-quote{font-style:italic;color:#c084fc;font-size:16px;line-height:1.5;margin-bottom:8px}
-.proof-attr{color:#6b7280;font-size:13px}
+/* Testimonials */
+.testimonials{margin:0 0 40px;text-align:center}
+.test-quote{font-style:italic;color:var(--star);font-size:16px;line-height:1.5;margin-bottom:8px}
+.test-attr{color:var(--text-dim);font-size:13px}
 
 /* Powered By */
-.powered{text-align:center;margin:36px 0 12px;padding:20px;background:#13101f;border:1px solid #1e1a2e;border-radius:14px}
-.powered p{color:#6b7280;font-size:12px;margin-bottom:4px}
-.powered .brand{font-size:14px;font-weight:700;color:#9ca3af}
-.powered .brand span{background:linear-gradient(135deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.powered{text-align:center;margin:36px 0 12px;padding:20px;background:rgba(26,36,86,.4);border:1px solid rgba(212,168,83,.1);border-radius:16px}
+.powered p{color:var(--text-dim);font-size:12px;margin-bottom:4px}
+.powered .brand{font-size:15px;font-weight:800}
+.powered .brand span{color:var(--gold)}
 
 /* Footer */
-.footer{text-align:center;color:#333;font-size:11px;padding:20px 0}
+.footer{text-align:center;color:#3a366a;font-size:11px;padding:20px 0}
 
 /* Toast */
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,#9333ea,#db2777);color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:600;z-index:100;transition:transform .4s;pointer-events:none;text-align:center}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,var(--gold),#c49640);color:var(--midnight);padding:14px 28px;border-radius:14px;font-size:14px;font-weight:800;z-index:100;transition:transform .4s;pointer-events:none;text-align:center;box-shadow:0 4px 20px var(--gold-glow)}
 .toast.visible{transform:translateX(-50%) translateY(0)}
 
-/* Scroll fade-in */
-.fade-in{opacity:0;transform:translateY(20px);transition:all .5s ease}
+/* Fade in */
+.fade-in{opacity:0;transform:translateY(20px);transition:all .6s ease}
 .fade-in.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
-<div class="bg"></div>
+
+<!-- Starfield -->
+<div class="sky"></div>
+<div class="stars" id="stars"></div>
+
 <div class="container">
 
-<!-- ACCESS GATE -->
+<!-- EMAIL GATE -->
 <div class="gate" id="gate">
-  <div class="gate-logo">&#10024;</div>
+  <div class="gate-sparkle">&#10024;</div>
   <h1>PixiePlanner.ai</h1>
-  <p>Enter your access code to continue</p>
-  <div class="gate-row">
-    <input class="gate-input" id="gateCode" type="text" placeholder="Access code" autocomplete="off" autocapitalize="off">
-    <button class="gate-btn" onclick="checkGate()">Enter</button>
+  <div class="tagline">Your Family's Disney Trip, Planned by AI</div>
+  <p class="sub">Personalized day-by-day guides built around your kids' ages, heights, and personalities. Real tips from real families.</p>
+  <div class="gate-box">
+    <h2>Get Early Access</h2>
+    <p>Enter your email to see how it works</p>
+    <div class="gate-row">
+      <input class="gate-input" id="gateEmail" type="email" placeholder="you@email.com" autocomplete="email">
+      <button class="gate-btn" onclick="checkGate()">Enter &#10024;</button>
+    </div>
+    <div class="gate-note">Free to browse. No spam. Unsubscribe anytime.</div>
   </div>
-  <div class="gate-err" id="gateErr">Code not recognized. Hit up Dave!</div>
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="main" id="main">
 
+  <!-- Hero -->
   <div class="hero fade-in">
-    <span class="hero-sparkle">&#10024;</span>
-    <h1>Your Family's Disney Trip,<br><span>Planned by AI</span></h1>
+    <span class="hero-spark">&#10024;</span>
+    <h1>Your Family's Disney Trip,<br><em>Planned by AI</em></h1>
     <div class="sub">Real tips from real families. Personalized for yours.</div>
-    <p>PixiePlanner uses AI to build a custom Disney World guide around YOUR family — your kids' ages, heights, personalities, budget, and energy levels. No more generic advice. No more meltdowns on Day 3.</p>
-    <div class="hero-badge">&#9889; Early Access — Help Us Build It</div>
+    <p class="desc">PixiePlanner builds a custom Disney World guide around YOUR family — your kids' ages, heights, personalities, budget, and energy levels. Every park. Every ride. Every restaurant. No more generic advice. No more meltdowns on Day 3.</p>
+    <div class="hero-badge">&#10024; Tested on Real Disney Trips</div>
   </div>
 
-  <!-- HOW IT WORKS -->
+  <!-- CTA -->
+  <div class="cta-section fade-in">
+    <a class="cta-btn" href="#intake">Get Your Family's Guide — $29</a>
+    <div class="cta-sub">Personalized AI guide delivered within 48 hours</div>
+  </div>
+
+  <!-- Sample Preview -->
+  <div class="sample-section fade-in">
+    <div class="sample-card">
+      <h3>&#128064; See What You'll Get</h3>
+      <p>We built a sample guide for a family of four with two young kids. Day-by-day park plans, priority rides, dining picks, rest strategies, and real kid reviews.</p>
+      <a class="sample-link" href="/sample">View the Sample Guide &#8594;</a>
+    </div>
+  </div>
+
+  <!-- How It Works -->
   <div class="how-it-works fade-in">
     <div class="section-label">How It Works</div>
     <div class="steps">
@@ -152,169 +222,157 @@ textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
         <div class="step-num">1</div>
         <div class="step-text">
           <h3>Tell Us About Your Family</h3>
-          <p>Quick AI chat about your kids (ages, heights, favorites, scare tolerance), your budget, and your travel style.</p>
+          <p>Fill out a quick form about your kids (ages, heights, favorites, scare tolerance), your trip dates, budget, and travel style.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-text">
-          <h3>Get Your Custom Guide</h3>
-          <p>AI builds a day-by-day plan with priority rides, rest breaks, dining picks, and real tips from families like yours.</p>
+          <h3>We Build Your Custom Guide</h3>
+          <p>Our AI creates a day-by-day plan with priority rides, rest breaks, dining picks, and real tips from families with kids like yours.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-text">
-          <h3>Go Have the Best Trip</h3>
-          <p>Follow your personalized plan. Skip the stress. Actually enjoy it. Come back and share what worked.</p>
+          <h3>Have the Best Trip Ever</h3>
+          <p>Follow your personalized plan on your phone. Skip the stress. Actually enjoy it. Come back and tell us how it went.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- FEATURES -->
+  <!-- Features -->
   <div class="features fade-in">
     <div class="section-label">What Makes Us Different</div>
     <div class="feat-grid">
       <div class="feat">
-        <div class="feat-icon">&#128107;</div>
+        <div class="feat-icon">&#128106;</div>
         <h4>Built for YOUR Family</h4>
         <p>A toddler family gets a totally different plan than a family with thrill-seeking tweens.</p>
       </div>
       <div class="feat">
         <div class="feat-icon">&#128548;</div>
         <h4>Meltdown Prevention</h4>
-        <p>Energy tracking, smart rest breaks, and pacing that prevents Day 3 disasters.</p>
+        <p>Smart rest breaks and pacing built into every day. We know when kids crash and plan around it.</p>
       </div>
       <div class="feat">
         <div class="feat-icon">&#128172;</div>
         <h4>Real Family Tips</h4>
-        <p>Reviews from actual families — including kids. Not generic blog posts.</p>
+        <p>Reviews and tips from actual families — including the kids. Not generic blog posts from 2019.</p>
       </div>
       <div class="feat">
         <div class="feat-icon">&#128176;</div>
         <h4>Budget Smart</h4>
-        <p>"Premier Pass saves you 3 hours — here's the math." We help every budget maximize.</p>
+        <p>"Premier Pass saves 3 hours — here's the math." We help every budget maximize value.</p>
       </div>
       <div class="feat">
         <div class="feat-icon">&#128197;</div>
         <h4>180-Day Planning</h4>
-        <p>From booking reminders to dining reservations to day-of optimization.</p>
+        <p>Booking reminders, dining reservation windows, Lightning Lane strategy — timed to your trip.</p>
       </div>
       <div class="feat">
         <div class="feat-icon">&#127783;</div>
         <h4>Weather Aware</h4>
-        <p>Rain plan? Heat wave? We reroute your day around conditions in real time.</p>
+        <p>Rain plan? Heat wave? We build alternate routes around conditions so you're never stuck.</p>
       </div>
     </div>
   </div>
 
-  <!-- SIGNUP SECTION -->
-  <div class="signup-section fade-in">
-    <div class="section-label">Join the Early Access</div>
-    <div class="signup-cards">
+  <!-- Parks Covered -->
+  <div class="parks-section fade-in">
+    <div class="section-label">Every Part of Disney World</div>
+    <div class="parks-grid">
+      <div class="park-chip"><span class="park-emoji">&#127984;</span><span class="park-name">Magic<br>Kingdom</span></div>
+      <div class="park-chip"><span class="park-emoji">&#127758;</span><span class="park-name">EPCOT</span></div>
+      <div class="park-chip"><span class="park-emoji">&#127916;</span><span class="park-name">Hollywood<br>Studios</span></div>
+      <div class="park-chip"><span class="park-emoji">&#129409;</span><span class="park-name">Animal<br>Kingdom</span></div>
+      <div class="park-chip"><span class="park-emoji">&#128717;</span><span class="park-name">Disney<br>Springs</span></div>
+      <div class="park-chip"><span class="park-emoji">&#127946;</span><span class="park-name">Water Parks<br>& Resorts</span></div>
+    </div>
+  </div>
 
-      <!-- FAMILIES -->
-      <div class="signup-card families" onclick="toggleForm('families')">
-        <div class="top-row">
-          <div class="card-icon families">&#127968;</div>
-          <h3>Families</h3>
-          <span class="card-tag tag-purple">Most Popular</span>
+  <!-- CTA Again -->
+  <div class="cta-section fade-in" id="intake">
+    <a class="cta-btn" href="#intake">Get Your Family's Guide — $29</a>
+    <div class="cta-sub">Personalized AI guide delivered within 48 hours</div>
+  </div>
+
+  <!-- Intake Form Placeholder -->
+  <div class="intake-section fade-in">
+    <div class="intake-placeholder">
+      <h3>&#128221; Tell Us About Your Trip</h3>
+      <p>Our intake form collects your trip dates, party details, kids' personalities, and preferences. Takes about 5 minutes. We use this to build your custom guide.</p>
+      <div class="coming">Intake Form Coming Soon — Sign Up Above to Be First</div>
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="testimonials fade-in">
+    <div class="section-label">From Real Families</div>
+    <div class="test-quote">"We tested this on a real 4-day Disney trip with two families and six kids. The guide was a game-changer — we hit every must-do ride with zero meltdowns."</div>
+    <div class="test-attr">— Dave & Sarah, Founders (and Disney-obsessed parents)</div>
+  </div>
+
+  <!-- Community -->
+  <div class="community-section fade-in">
+    <div class="section-label">Join the Community</div>
+    <div class="community-cards">
+      <div class="comm-card" onclick="toggleComm('inf')">
+        <div class="comm-icon inf">&#127908;</div>
+        <div class="comm-info">
+          <h3>Influencers & Creators</h3>
+          <p>Feature your family's tips. Earn referral revenue when followers sign up.</p>
         </div>
-        <p>Get a free personalized Disney guide for your family. Be one of our first testers and help shape the product.</p>
-        <ul>
-          <li>Custom AI guide based on your kids</li>
-          <li>Early access to new features</li>
-          <li>Direct line to the founders</li>
-        </ul>
-        <div class="signup-form" id="form-families">
-          <div class="form-row"><label>Name</label><input class="form-input" id="fam-name" placeholder="Your name"></div>
-          <div class="form-row"><label>Email</label><input class="form-input" id="fam-email" type="email" placeholder="you@email.com"></div>
-          <div class="form-row"><label>Family Details</label><textarea class="form-input" id="fam-details" placeholder="How many kids? Ages? When's your trip?"></textarea></div>
-          <button class="form-submit purple" onclick="submitForm(event,'families')">Get Early Access</button>
-        </div>
+        <span class="comm-tag tag-blush">Earn</span>
+      </div>
+      <div class="comm-form" id="form-inf">
+        <div class="form-row"><label>Name</label><input class="form-input" id="inf-name" placeholder="Your name"></div>
+        <div class="form-row"><label>Email</label><input class="form-input" id="inf-email" type="email" placeholder="you@email.com"></div>
+        <div class="form-row"><label>Platform & Audience</label><textarea class="form-input" id="inf-details" placeholder="Instagram, TikTok, YouTube? Followers? Disney content?"></textarea></div>
+        <button class="form-submit blush" onclick="submitComm(event,'influencer')">Apply as Creator</button>
       </div>
 
-      <!-- INFLUENCERS -->
-      <div class="signup-card influencers" onclick="toggleForm('influencers')">
-        <div class="top-row">
-          <div class="card-icon influencers">&#127908;</div>
-          <h3>Influencers</h3>
-          <span class="card-tag tag-pink">Earn Revenue</span>
-        </div>
-        <p>Feature your family's Disney tips in guides your audience can use. Earn referral revenue when followers sign up.</p>
-        <ul>
-          <li>Your name & brand featured in guides</li>
-          <li>Referral revenue on paid signups</li>
-          <li>Founding contributor status</li>
-        </ul>
-        <div class="signup-form" id="form-influencers">
-          <div class="form-row"><label>Name</label><input class="form-input" id="inf-name" placeholder="Your name"></div>
-          <div class="form-row"><label>Email</label><input class="form-input" id="inf-email" type="email" placeholder="you@email.com"></div>
-          <div class="form-row"><label>Platform & Audience</label><textarea class="form-input" id="inf-details" placeholder="Instagram, TikTok, YouTube? How many followers? Disney content focus?"></textarea></div>
-          <button class="form-submit pink" onclick="submitForm(event,'influencers')">Apply as Creator</button>
-        </div>
-      </div>
-
-      <!-- EXPERTS -->
-      <div class="signup-card experts" onclick="toggleForm('experts')">
-        <div class="top-row">
-          <div class="card-icon experts">&#127891;</div>
+      <div class="comm-card" onclick="toggleComm('exp')">
+        <div class="comm-icon exp">&#127891;</div>
+        <div class="comm-info">
           <h3>Disney Experts</h3>
-          <span class="card-tag tag-blue">Contribute</span>
+          <p>Been 10+ times? Know every shortcut? Contribute tips and get credited by name.</p>
         </div>
-        <p>Been to Disney 10+ times? Know every shortcut? Share your knowledge and help families have better trips.</p>
-        <ul>
-          <li>Expert contributor badge</li>
-          <li>Tips attributed to you by name</li>
-          <li>Help shape the knowledge base</li>
-        </ul>
-        <div class="signup-form" id="form-experts">
-          <div class="form-row"><label>Name</label><input class="form-input" id="exp-name" placeholder="Your name"></div>
-          <div class="form-row"><label>Email</label><input class="form-input" id="exp-email" type="email" placeholder="you@email.com"></div>
-          <div class="form-row"><label>Your Disney Experience</label><textarea class="form-input" id="exp-details" placeholder="How many times have you been? Any specialties (dining, rides, DAS, etc.)?"></textarea></div>
-          <button class="form-submit blue" onclick="submitForm(event,'experts')">Join as Expert</button>
-        </div>
+        <span class="comm-tag tag-blue">Contribute</span>
+      </div>
+      <div class="comm-form" id="form-exp">
+        <div class="form-row"><label>Name</label><input class="form-input" id="exp-name" placeholder="Your name"></div>
+        <div class="form-row"><label>Email</label><input class="form-input" id="exp-email" type="email" placeholder="you@email.com"></div>
+        <div class="form-row"><label>Your Disney Experience</label><textarea class="form-input" id="exp-details" placeholder="How many times? Specialties (dining, DAS, rides)?"></textarea></div>
+        <button class="form-submit blue" onclick="submitComm(event,'expert')">Join as Expert</button>
       </div>
 
-      <!-- VENDORS -->
-      <div class="signup-card vendors" onclick="toggleForm('vendors')">
-        <div class="top-row">
-          <div class="card-icon vendors">&#129309;</div>
+      <div class="comm-card" onclick="toggleComm('ven')">
+        <div class="comm-icon ven">&#129309;</div>
+        <div class="comm-info">
           <h3>Vendors & Partners</h3>
-          <span class="card-tag tag-yellow">Partner</span>
+          <p>Strollers, transport, equipment — reach families at their moment of need.</p>
         </div>
-        <p>Stroller rentals, equipment, transport, dining — reach families at their moment of need with zero ad spend.</p>
-        <ul>
-          <li>Reach families actively planning trips</li>
-          <li>Integrated recommendations, not banner ads</li>
-          <li>Performance-based, not pay-to-play</li>
-        </ul>
-        <div class="signup-form" id="form-vendors">
-          <div class="form-row"><label>Name</label><input class="form-input" id="ven-name" placeholder="Your name"></div>
-          <div class="form-row"><label>Email</label><input class="form-input" id="ven-email" type="email" placeholder="you@email.com"></div>
-          <div class="form-row"><label>Your Business</label><textarea class="form-input" id="ven-details" placeholder="What do you offer? Strollers, transport, equipment, dining?"></textarea></div>
-          <button class="form-submit yellow" onclick="submitForm(event,'vendors')">Partner With Us</button>
-        </div>
+        <span class="comm-tag tag-gold">Partner</span>
       </div>
-
+      <div class="comm-form" id="form-ven">
+        <div class="form-row"><label>Name</label><input class="form-input" id="ven-name" placeholder="Your name"></div>
+        <div class="form-row"><label>Email</label><input class="form-input" id="ven-email" type="email" placeholder="you@email.com"></div>
+        <div class="form-row"><label>Your Business</label><textarea class="form-input" id="ven-details" placeholder="What do you offer? Strollers, transport, equipment?"></textarea></div>
+        <button class="form-submit gold" onclick="submitComm(event,'vendor')">Partner With Us</button>
+      </div>
     </div>
   </div>
 
-  <!-- SOCIAL PROOF -->
-  <div class="proof fade-in">
-    <div class="proof-quote">"We tested this on a real 4-day Disney trip with two families and six kids. The guide was a game-changer."</div>
-    <div class="proof-attr">— Dave & Sarah, Founders (and Disney-obsessed parents)</div>
-  </div>
-
-  <!-- POWERED BY -->
+  <!-- Powered By -->
   <div class="powered fade-in">
     <p>A product of</p>
     <div class="brand"><span>ParkPlanner.ai</span></div>
     <p style="margin-top:6px;font-size:11px">AI-powered trip planning for every theme park</p>
   </div>
 
-  <div class="footer">pixieplanner.ai &mdash; Built with pixie dust & AI</div>
+  <div class="footer">pixieplanner.ai — Built with pixie dust & AI</div>
 </div>
 
 </div>
@@ -324,141 +382,129 @@ textarea.form-input{resize:vertical;min-height:60px;font-family:inherit}
 
 <script>
 // ========== CONFIG ==========
-var ACCESS_CODES = ['vip','pixie','pixieplan','pixieplanner','dave','sarah','davefontaine','beta'];
 var WEB3FORMS_KEY = 'e71b608c-ba69-4dc3-82d0-765910e81fc3';
+// STRIPE_LINK: Replace this with your Stripe Payment Link URL when ready
+var STRIPE_LINK = '#intake';
 
-// ========== ACCESS GATE ==========
-function checkGate(){
-  var code = document.getElementById('gateCode').value.trim().toLowerCase().replace(/\s+/g,'');
-  var params = new URLSearchParams(window.location.search);
-  if(ACCESS_CODES.indexOf(code) !== -1){
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('main').style.display = 'block';
-    trackEvent('access', code);
-    initFadeIn();
-  } else {
-    document.getElementById('gateErr').style.display = 'block';
+// ========== STARS ==========
+(function(){
+  var c = document.getElementById('stars');
+  for(var i = 0; i < 80; i++){
+    var s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.setProperty('--dur', (2+Math.random()*4)+'s');
+    s.style.animationDelay = Math.random()*4+'s';
+    if(Math.random()>.7) s.style.width=s.style.height='3px';
+    c.appendChild(s);
   }
+})();
+
+// ========== EMAIL GATE ==========
+function checkGate(){
+  var email = document.getElementById('gateEmail').value.trim();
+  if(!email || !email.includes('@') || !email.includes('.')){
+    showToast('Please enter a valid email!');
+    return;
+  }
+  // Capture email
+  fetch('https://api.web3forms.com/submit', {
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      access_key:WEB3FORMS_KEY,
+      subject:'PixiePlanner.ai — New Email Signup',
+      from_name:'PixiePlanner.ai',
+      email:email,
+      source:window.location.href,
+      referrer:document.referrer||'direct',
+      timestamp:new Date().toISOString()
+    })
+  }).catch(function(){});
+  // Unlock
+  document.getElementById('gate').style.display='none';
+  document.getElementById('main').style.display='block';
+  showToast('Welcome! Explore your future Disney guide &#10024;');
+  setTimeout(initFadeIn,100);
 }
 
 // Auto-access via URL param
 (function(){
-  var params = new URLSearchParams(window.location.search);
-  var a = params.get('access');
-  if(a && ACCESS_CODES.indexOf(a.toLowerCase()) !== -1){
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('main').style.display = 'block';
-    trackEvent('access-auto', a.toLowerCase());
-    setTimeout(initFadeIn, 100);
+  var p = new URLSearchParams(window.location.search);
+  var a = p.get('access');
+  if(a && ['vip','pixie','pixieplan','pixieplanner','dave','sarah','davefontaine','beta'].indexOf(a.toLowerCase())!==-1){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('main').style.display='block';
+    setTimeout(initFadeIn,100);
   }
 })();
 
-// Enter key on gate
-document.getElementById('gateCode').addEventListener('keydown', function(e){
-  if(e.key === 'Enter') checkGate();
-});
+// Enter key
+document.getElementById('gateEmail').addEventListener('keydown',function(e){if(e.key==='Enter')checkGate()});
 
-// ========== FORM TOGGLE ==========
-function toggleForm(type){
-  var form = document.getElementById('form-' + type);
+// ========== COMMUNITY FORMS ==========
+function toggleComm(type){
+  var form = document.getElementById('form-'+type);
   var isOpen = form.classList.contains('open');
-  // Close all forms first
-  document.querySelectorAll('.signup-form').forEach(function(f){ f.classList.remove('open'); });
+  document.querySelectorAll('.comm-form').forEach(function(f){f.classList.remove('open')});
   if(!isOpen){
     form.classList.add('open');
-    // Focus the name field
-    var nameInput = form.querySelector('input');
-    if(nameInput) setTimeout(function(){ nameInput.focus(); }, 200);
+    var inp = form.querySelector('input');
+    if(inp) setTimeout(function(){inp.focus()},200);
   }
 }
 
-// ========== FORM SUBMIT ==========
-function submitForm(e, type){
+function submitComm(e,type){
   e.stopPropagation();
-  var prefix = type === 'families' ? 'fam' : type === 'influencers' ? 'inf' : type === 'experts' ? 'exp' : 'ven';
-  var name = document.getElementById(prefix + '-name').value.trim();
-  var email = document.getElementById(prefix + '-email').value.trim();
-  var details = document.getElementById(prefix + '-details').value.trim();
-
-  if(!name || !email){
-    showToast('Please fill in your name and email!');
-    return;
-  }
-
-  // Send via Web3Forms
-  var data = {
-    access_key: WEB3FORMS_KEY,
-    subject: 'PixiePlanner.ai Signup: ' + type.toUpperCase() + ' — ' + name,
-    from_name: 'PixiePlanner.ai',
-    name: name,
-    email: email,
-    signup_type: type,
-    details: details || '(none provided)',
-    source: window.location.href,
-    timestamp: new Date().toISOString()
-  };
-
+  var prefix = type==='influencer'?'inf':type==='expert'?'exp':'ven';
+  var name = document.getElementById(prefix+'-name').value.trim();
+  var email = document.getElementById(prefix+'-email').value.trim();
+  var details = document.getElementById(prefix+'-details').value.trim();
+  if(!name||!email){showToast('Please fill in your name and email!');return}
   fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
-  }).then(function(r){ return r.json(); }).then(function(res){
-    if(res.success){
-      showToast('You\'re in! We\'ll be in touch soon. &#10024;');
-      // Clear form
-      document.getElementById(prefix + '-name').value = '';
-      document.getElementById(prefix + '-email').value = '';
-      document.getElementById(prefix + '-details').value = '';
-      document.getElementById('form-' + type).classList.remove('open');
-    } else {
-      showToast('Something went wrong. Try again?');
-    }
-  }).catch(function(){
-    showToast('Something went wrong. Try again?');
-  });
-}
-
-// ========== ANALYTICS ==========
-function trackEvent(action, label){
-  fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      access_key: WEB3FORMS_KEY,
-      subject: 'PixiePlanner.ai Event: ' + action,
-      from_name: 'PixiePlanner.ai Analytics',
-      action: action,
-      label: label || '',
-      page: window.location.href,
-      referrer: document.referrer || 'direct',
-      ua: navigator.userAgent,
-      timestamp: new Date().toISOString()
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      access_key:WEB3FORMS_KEY,
+      subject:'PixiePlanner.ai Community: '+type.toUpperCase()+' — '+name,
+      from_name:'PixiePlanner.ai',
+      name:name,email:email,signup_type:type,
+      details:details||'(none)',
+      source:window.location.href,
+      timestamp:new Date().toISOString()
     })
-  }).catch(function(){});
+  }).then(function(r){return r.json()}).then(function(res){
+    if(res.success){
+      showToast("You're in! We'll be in touch soon &#10024;");
+      document.getElementById(prefix+'-name').value='';
+      document.getElementById(prefix+'-email').value='';
+      document.getElementById(prefix+'-details').value='';
+      document.getElementById('form-'+prefix).classList.remove('open');
+    } else showToast('Something went wrong. Try again?');
+  }).catch(function(){showToast('Something went wrong. Try again?')});
 }
 
 // ========== TOAST ==========
 function showToast(msg){
-  var t = document.getElementById('toast');
-  t.innerHTML = msg;
-  t.classList.add('visible');
-  setTimeout(function(){ t.classList.remove('visible'); }, 3500);
+  var t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('visible');
+  setTimeout(function(){t.classList.remove('visible')},3500);
 }
 
-// ========== FADE IN ON SCROLL ==========
+// ========== FADE IN ==========
 function initFadeIn(){
-  var els = document.querySelectorAll('.fade-in');
-  function check(){
-    els.forEach(function(el){
-      var rect = el.getBoundingClientRect();
-      if(rect.top < window.innerHeight - 40){
-        el.classList.add('visible');
-      }
-    });
-  }
-  check();
-  window.addEventListener('scroll', check);
+  var els=document.querySelectorAll('.fade-in');
+  function check(){els.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight-40)el.classList.add('visible')})}
+  check();window.addEventListener('scroll',check);
 }
+
+// ========== CTA LINKS ==========
+document.querySelectorAll('.cta-btn').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    if(STRIPE_LINK==='#intake'){
+      e.preventDefault();
+      document.getElementById('intake').scrollIntoView({behavior:'smooth'});
+    }
+  });
+});
 </script>
 </body>
 </html>
